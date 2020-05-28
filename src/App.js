@@ -1,12 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import logo from './logo.svg';
 import './App.css';
-import hang from './images/hang.jpg'
 import getRandomWord from './words'
+import images from './images'
 
-const onDeactivate = (e) => {
+const onLetterClick = (e) => {
     e.target.className = 'inactive';
+    let letter = e.target.innerText;
+
+    letterExists(letter)
+        ? addValidLetter(letter)
+        : guessCount++;
+    render();
 };
 
 const activateButtons = () => {
@@ -17,7 +22,17 @@ const activateButtons = () => {
 const onReset = () => {
     activateButtons();
     setNewWord(word);
+    validLetters = [];
+    guessCount = 0;
     render();
+}
+
+const addValidLetter = (letter) => {
+    word
+        .split('')
+        .map(x => {
+            x === letter && validLetters.push(letter);
+        })
 }
 
 const setNewWord = (prevWord) => {
@@ -26,7 +41,39 @@ const setNewWord = (prevWord) => {
     } while (word === prevWord)
 }
 
+const letterExists = (letter) => {
+    return word.includes(letter);
+}
+
+const FormatWord = () => {
+    return word.split('').map((letter, i) => {
+        return <p key={i}>
+            {
+                validLetters.includes(letter)
+                    ? letter
+                    : '_'
+            }
+        </p>;
+    });
+}
+
+const onGameOver = (e) => {
+    e.target.parentElement.className = 'hide';
+    onReset();
+}
+
+const GameOver = () => {
+    return (
+        <div id="gameover" className={guessCount > 6 || validLetters.length === word.length ? 'show' : 'hide'}>
+            <h1 id="gameover-title">{guessCount > 6 ? 'Du förlorade!' : 'Grattis du vann!'}</h1>
+            <p id='play-again' onClick={onGameOver}>Spela igen</p>
+        </div>
+    )
+}
+
 let word = '';
+let validLetters = [];
+let guessCount = 0;
 
 const App = () => {
     let alphabet = 'abcdefghijklmnopqrstuvwxyzåäö'.split('');
@@ -36,25 +83,19 @@ const App = () => {
         <div className="App">
             <h1>Hänga gubbe</h1>
             <p>Spelet går ut på att gissa ett ord</p>
-            <img src={hang} />
+            <img src={images[guessCount < 7 ? guessCount : 6]} alt='hangman' />
 
             <div id="lines">
-                {
-                    word
-                        .split('')
-                        .map((letter, i) => {
-                            return <p key={i}>_</p>
-                        })
-                }
+                {<FormatWord />}
             </div>
-            <p>Antal fel: 0</p>
+            <p>Antal fel: {guessCount}</p>
             <div id="characters">
                 {
                     alphabet.map((letter) => {
                         return (
                             <button
                                 key={letter}
-                                onClick={onDeactivate}
+                                onClick={onLetterClick}
                                 className='active'>
                                 {letter}
                             </button>
@@ -63,6 +104,9 @@ const App = () => {
                 }
             </div>
             <button id="btn-reset" onClick={onReset}>Återställ</button>
+            {
+                <GameOver />
+            }
         </div>
     );
 }
