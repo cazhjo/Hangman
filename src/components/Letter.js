@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Letter = ({show, text}) => (
-    <p>{show ? text : '_'}</p>
-)
+const Letter = ({show, text, checkWin}) => {
+    return <p>{show ? text : '_'}</p>;
+}
 
 export default Letter;

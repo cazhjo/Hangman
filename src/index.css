@@ -15,7 +15,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Coming Soon';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url('images/bg.jpg');
+  background-image: url('./assets/images/bg.jpg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
